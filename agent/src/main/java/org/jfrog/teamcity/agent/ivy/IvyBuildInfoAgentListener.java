@@ -15,6 +15,7 @@ import org.jfrog.teamcity.common.RunnerParameterKeys;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Map;
 
 import static org.jfrog.teamcity.common.ConstantValues.PROP_SKIP_LOG_MESSAGE;
@@ -68,7 +69,7 @@ public class IvyBuildInfoAgentListener extends ArtifactoryAgentLifeCycleAdapter 
             runner.addRunnerParameter(RunnerParameterKeys.PUBLISH_BUILD_INFO, Boolean.TRUE.toString());
             ArtifactoryClientConfiguration clientConf = ArtifactoryClientConfigurationBuilder.create(runner);
             try {
-                File tempPropFile = File.createTempFile("buildInfo", "properties");
+                File tempPropFile = Files.createTempFile("buildInfo", "properties").toFile();
                 clientConf.setPropertiesFile(tempPropFile.getCanonicalPath());
                 clientConf.persistToPropertiesFile();
                 runner.addSystemProperty(BuildInfoConfigProperties.PROP_PROPS_FILE, tempPropFile.getCanonicalPath());

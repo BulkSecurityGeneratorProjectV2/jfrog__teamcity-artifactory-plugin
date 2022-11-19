@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Map;
 
 import static org.jfrog.teamcity.common.ConstantValues.PROP_SKIP_LOG_MESSAGE;
@@ -133,7 +134,7 @@ public class GradleBuildInfoAgentListener extends ArtifactoryAgentLifeCycleAdapt
             }
             taskBuilder.append(ArtifactoryTask.ARTIFACTORY_PUBLISH_TASK_NAME);
             runnerContext.addRunnerParameter("ui.gradleRunner.gradle.tasks.names", taskBuilder.toString());
-            File tempPropFile = File.createTempFile("buildInfo", "properties", build.getBuildTempDirectory());
+            File tempPropFile = Files.createTempFile(build.getBuildTempDirectory().toPath(), "buildInfo", "properties").toFile();
             clientConf.setPropertiesFile(tempPropFile.getCanonicalPath());
             clientConf.persistToPropertiesFile();
             commandBuilder.append("-D").append(BuildInfoConfigProperties.PROP_PROPS_FILE).append("=").
@@ -175,7 +176,7 @@ public class GradleBuildInfoAgentListener extends ArtifactoryAgentLifeCycleAdapt
             return null;
         }
 
-        File tempInitScript = File.createTempFile("artifactory.init.script", "gradle", build.getBuildTempDirectory());
+        File tempInitScript = Files.createTempFile(build.getBuildTempDirectory().toPath(), "artifactory.init.script", "gradle").toFile();
         FileUtils.writeStringToFile(tempInitScript, scriptTemplate, "utf-8");
         return tempInitScript;
     }
